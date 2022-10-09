@@ -22,8 +22,11 @@ class TicTacToe
 
   def initialize
     puts ''
-    puts 'Do you want to play as X or O? '
-    @choice = gets.chomp
+    until @choice == 'X' || @choice == 'O'
+      puts 'Do you want to play as X or O? '
+      @choice = gets.chomp
+    end
+
     @choice == 'X' ? @bot = 'O' : @bot = 'X'
 
     puts "\e[H\e[2J"
