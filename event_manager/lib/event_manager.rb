@@ -1,6 +1,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'date'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5,"0")[0..4]
@@ -98,4 +99,33 @@ def peak_reg_hours(csv_file)
 			
 	return common_hours
 end
+
+def peak_reg_week_day(csv_file)
+	contents = CSV.open(
+	  csv_file,
+	  headers: true,
+	  header_converters: :symbol
+	)
+
+	dates = []
 	
+	contents.each do |row|
+	  id = row[0]
+	  regdatetime = row[:regdate]
+	  regdate = regdatetime.split(" ")[0]
+	  regday = Date.strptime(reg, '%m/%d/%y').wday
+	  dates.push(regday)
+	end
+	
+	days_count = dates.tally
+	p days_count
+	max = days_count.max_by { |k,v| v}[1]
+	common_days = []
+	hours_days.each do |key, value|
+		if value == max
+			common_days.push(key)
+		end
+	end
+			
+	return common_days
+end
