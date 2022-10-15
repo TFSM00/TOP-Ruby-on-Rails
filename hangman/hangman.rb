@@ -4,7 +4,9 @@ require 'pry-byebug'
 require 'time'
 puts "\e[H\e[2J"
 
+# frozen_string_literal: true
 
+# This plays a Hangman game
 class Hangman
   @option = ''
   @user_letter = ''
@@ -12,7 +14,7 @@ class Hangman
   @random_word = []
   @hang = []
   @guesses_left = 0
-  
+
   def initialize
     puts "\e[H\e[2J"
     wordfile = File.open('words.txt', 'r')
@@ -31,29 +33,29 @@ class Hangman
     @guesses_left = (0.85 * @random_word.length).to_i
     puts 'Do you want to start a (n)ew game or to (l)oad a save?'
     @option = gets.chomp
+
     until @option == 'n' || @option == 'l'
       @option = gets.chomp
     end
 
-
     if @option == 'l'
-      load 
+      load
     end
 
     until ended? != false
       display
       play
     end
-      
+
     puts ended?
   end
 
   def play
     alphabet = ('a'..'z').to_a
-    
-    puts "Enter a valid letter (or save by typing 1):"
+
+    puts 'Enter a valid letter (or save by typing 1):'
     @user_letter = gets.chomp.downcase
-    
+
     until alphabet.include?(@user_letter) && !@@used_letters.include?(@user_letter)
       if @user_letter == '1'
         save
@@ -77,7 +79,7 @@ class Hangman
 
   def display
     puts "\e[H\e[2J"
-    puts "Hangman".yellow
+    puts 'Hangman'.yellow
     puts "\n"
     puts 'Word: ' + @hang.join(' ') + "\n"
     puts 'Guesses Left: ' + @guesses_left.to_s.green
@@ -85,25 +87,26 @@ class Hangman
   end
 
   private
+
   def ended?
     if @guesses_left.zero?
-      return "\nYou lost by running out of guesses! Bad luck!\nThe word was #{@random_word.join('')}"
+      "\nYou lost by running out of guesses! Bad luck!\nThe word was #{@random_word.join('')}"
     elsif !@hang.include? '_'
-      return "\nYou won! The word was #{@hang.join('')}".green
+      "\nYou won! The word was #{@hang.join('')}".green
     else
-      return false
+      false
     end
   end
 
   def save
     puts "\e[H\e[2J"
     json = {
-      "option" => @option,
-      "user_letter" => @user_letter,
-      "used_letters" => @@used_letters,
-      "random_word" => @random_word,
-      "hang"=> @hang,
-      "guesses_left" => @guesses_left
+      'option' => @option,
+      'user_letter' => @user_letter,
+      'used_letters' => @@used_letters,
+      'random_word' => @random_word,
+      'hang' => @hang,
+      'guesses_left' => @guesses_left
     }
     time = Time.now
     filename = "hangman-#{time.day}#{time.month}#{time.year}-#{time.hour}#{time.min}.json" 
@@ -119,19 +122,19 @@ class Hangman
     puts save_hash
     puts "\nEnter the number corresponding to the save you wish to load!"
     save_index = gets.chomp
-    
+
     until save_hash.keys.include?(save_index.to_i)
       save_index = gets.chomp
     end
 
     save = File.read(saves[save_index.to_i])
     data_hash = JSON.parse(save)
-    @option = data_hash["option"]
-    @user_letter = data_hash["user_letter"]
-    @@used_letters = data_hash["used_letters"]
-    @random_word = data_hash["random_word"]
-    @hang = data_hash["hang"]
-    @guesses_left = data_hash["guesses_left"]
+    @option = data_hash['option']
+    @user_letter = data_hash['user_letter']
+    @@used_letters = data_hash['used_letters']
+    @random_word = data_hash['random_word']
+    @hang = data_hash['hang']
+    @guesses_left = data_hash['guesses_left']
     puts "\e[H\e[2J"
     puts "Save Loaded!\n"
   end
